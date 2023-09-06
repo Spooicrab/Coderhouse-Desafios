@@ -1,4 +1,4 @@
-/* 
+/*  DESAFIO 1
 
 class ProductManager {
   static products = [];
@@ -63,32 +63,8 @@ console.log(ProductManager.getProductsById(1));
 console.log(ProductManager.getProductsById(10));
 */
 
-// async AñadirProducto(producto) {
-
-// return this.getProducts().then((productos) => {
-//   let id;
-//   productos.length
-//     ? (id = productos[productos.length - 1].id + 1)
-//     : (id = 1);
-// });
-
-//   try {
-//     const users = await this.getUsers();
-//     let id;
-//     if (!users.length) {
-//       id = 1;
-//     } else {
-//       id = users[users.length - 1].id + 1;
-//     }
-//     users.push({ id, ...obj });
-//     await fs.promises.writeFile(this.path, JSON.stringify(users));
-//   } catch (error) {
-//     return error;
-//   }
-
 //DESAFIO 2
 
-//import { error } from "console"; // Esto se añadió solo por alguna extensión que tenia instalada previamente, sospecho que alguna dirigida a react; por las dudas lo dejo asi
 const fs = require("fs");
 
 class ProductManager {
@@ -104,7 +80,9 @@ class ProductManager {
       return [];
     }
   }
+
   //
+
   async addProducts(title, description, price, thumbnail, code, stock) {
     try {
       let productos = await this.getProducts();
@@ -125,6 +103,8 @@ class ProductManager {
     }
   }
 
+  //
+
   async getProductbyID(ID) {
     try {
       const Productos = await this.getProducts();
@@ -135,7 +115,38 @@ class ProductManager {
     }
   }
 
-  updateProduct() {}
+  //
+
+  async updateProduct(
+    ID,
+    newtitle,
+    newdescription,
+    newprice,
+    newthumbnail,
+    newcode,
+    newstock
+  ) {
+    try {
+      let Productos = await this.getProducts();
+      Productos = Productos.map((producto) => {
+        if (producto.id === ID) {
+          producto.title = newtitle || producto.title;
+          producto.description = newdescription || producto.description;
+          producto.price = newprice || producto.price;
+          producto.thumbnail = newthumbnail || producto.thumbnail;
+          producto.code = newcode || producto.code;
+          producto.stock = newstock || producto.stock;
+        }
+        return producto;
+      });
+      await fs.promises.writeFile(this.path, JSON.stringify(Productos));
+      console.log("¡Producto actualizado!");
+    } catch (error) {
+      return error;
+    }
+  }
+
+  //
 
   async deleteProduct(ID) {
     try {
@@ -150,36 +161,54 @@ class ProductManager {
 
 async function test() {
   const ListaProductos = new ProductManager("Productos.json");
+  //Ir descomentando a medida que se va probando para ir testeando
 
+  /*  Aqui añade 2 productos (el array comienza con 10 que ya dejaré creados)
   //ITEM 1
   await ListaProductos.addProducts(
-    "titulo",
-    "descripcion",
-    2,
+    "titulo impar",
+    "descripcion impar",
+    1,
     "no hay",
-    "acv123",
-    4
+    "codigo impar",
+    1
   );
-  //ITEM 2
+  // //ITEM 2
   await ListaProductos.addProducts(
-    "titulo del id a encontrar",
-    "descripcion del id a encontrar",
+    "titulo par",
+    "descripcion par",
     2,
     "no hay",
-    "aceev123",
-    4
+    "codigo par",
+    2
   );
-  console.log("buscar por id");
-  console.log(await ListaProductos.getProductbyID(99));
+  */
 
-  console.log("mostrar todos los productos");
-  const productos = await ListaProductos.getProducts();
-  console.log(productos);
+  /* Aqui se puede buscar un id en especifico y devolverlo, dejo  puesto como 99
+  console.log("buscar por id:");
+  let Busqueda = await ListaProductos.getProductbyID(3);
+  console.log(Busqueda);
+  */
 
-  console.log("borrar id 1");
-  await ListaProductos.deleteProduct(1);
-  const productosnuevo = await ListaProductos.getProducts();
-  console.log(productosnuevo);
+  /* Muestra todo el Array actual
+  //   console.log("mostrar todos los productos");
+  //   const productos = await ListaProductos.getProducts();
+  //   console.log(productos);
+  */
+
+  /* Borra el ID indicado 
+  //   console.log("borrar id 1");
+  //   await ListaProductos.deleteProduct(1);
+  //   const ListaSinIdBorrado = await ListaProductos.getProducts();
+  //   console.log(ListaSinIdBorrado);
+  */
+
+  /* Actualiza el Producto de ID indicado
+  //   console.log("Actualizar Producto 5");
+  //   await ListaProductos.updateProduct(5, "titulo nuevo mas nuevo");
+  //   const productosactualizados = await ListaProductos.getProductbyID(5);
+  //   console.log(productosactualizados);
+  //
+  */
 }
-
 test();
