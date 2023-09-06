@@ -125,11 +125,27 @@ class ProductManager {
     }
   }
 
-  getProductbyID() {}
+  async getProductbyID(ID) {
+    try {
+      const Productos = await this.getProducts();
+      const producto = Productos.find((p) => p.id === ID);
+      return producto ? producto : "no encontrado";
+    } catch (error) {
+      return error;
+    }
+  }
 
   updateProduct() {}
 
-  deleteProduct() {}
+  async deleteProduct(ID) {
+    try {
+      const Lista = await this.getProducts();
+      const NuevaLista = Lista.filter((p) => p.id !== ID);
+      await fs.promises.writeFile(this.path, JSON.stringify(NuevaLista));
+    } catch (error) {
+      return error;
+    }
+  }
 }
 
 async function test() {
@@ -144,21 +160,26 @@ async function test() {
     "acv123",
     4
   );
-
   //ITEM 2
-
   await ListaProductos.addProducts(
-    "titulo",
-    "descripcion",
+    "titulo del id a encontrar",
+    "descripcion del id a encontrar",
     2,
     "no hay",
     "aceev123",
     4
   );
-  // await manager1.deleteUser(4)
-  //const user =await manager1.getUserById(2)
+  console.log("buscar por id");
+  console.log(await ListaProductos.getProductbyID(99));
+
+  console.log("mostrar todos los productos");
   const productos = await ListaProductos.getProducts();
   console.log(productos);
+
+  console.log("borrar id 1");
+  await ListaProductos.deleteProduct(1);
+  const productosnuevo = await ListaProductos.getProducts();
+  console.log(productosnuevo);
 }
 
 test();
