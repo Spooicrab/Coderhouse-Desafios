@@ -97,23 +97,20 @@ class ProductManager {
   }
 
   async getProducts() {
-    fs.existsSync
-      ? fs.promises
-          .readFile(this.path, "utf-8")
-          .then((info) => JSON.parse(info))
-          .catch((error) => "HUBO UN ERROR")
-      : [];
+    try {
+      const info = await fs.promises.readFile(this.path, "utf-8");
+      return JSON.parse(info);
+    } catch (error) {
+      return [];
+    }
   }
-
   //
   async addProducts(title, description, price, thumbnail, code, stock) {
     try {
       let productos = await this.getProducts();
 
       const producto = {
-        id: this.productos.length
-          ? this.productos[this.productos.length - 1].id + 1
-          : 1,
+        id: productos.length ? productos[productos.length - 1].id + 1 : 1,
         title,
         description,
         price,
@@ -121,7 +118,6 @@ class ProductManager {
         code,
         stock,
       };
-
       productos.push(producto);
       await fs.promises.writeFile(this.path, JSON.stringify(productos));
     } catch (error) {
@@ -138,6 +134,8 @@ class ProductManager {
 
 async function test() {
   const ListaProductos = new ProductManager("Productos.json");
+
+  //ITEM 1
   await ListaProductos.addProducts(
     "titulo",
     "descripcion",
@@ -146,9 +144,20 @@ async function test() {
     "acv123",
     4
   );
+
+  //ITEM 2
+
+  await ListaProductos.addProducts(
+    "titulo",
+    "descripcion",
+    2,
+    "no hay",
+    "aceev123",
+    4
+  );
   // await manager1.deleteUser(4)
-  const productos = await ListaProductos.getProducts();
   //const user =await manager1.getUserById(2)
+  const productos = await ListaProductos.getProducts();
   console.log(productos);
 }
 
